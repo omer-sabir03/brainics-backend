@@ -1,0 +1,8 @@
+logging:
+  level:
+    com.brainics: DEBUG
+    org.flywaydb: INFO
+
+spring:
+  jpa:
+    show-sql: false
