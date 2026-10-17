@@ -52,3 +52,8 @@ app:
   bootstrap-admin:
     username: ${INITIAL_ADMIN_USERNAME:}
     password: ${INITIAL_ADMIN_PASSWORD:}
+
+resend:
+  api-key: ${RESEND_API_KEY}
+  from: ${BRAINICS_EMAIL_FROM}
+  reply-to: ${BRAINICS_EMAIL_REPLY_TO:brainics@outlook.com}
