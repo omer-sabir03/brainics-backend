@@ -22,4 +22,8 @@ public interface AdmissionEnquiryRepository extends JpaRepository<AdmissionEnqui
     Page<AdmissionEnquiry> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<AdmissionEnquiry> findByStatusOrderByCreatedAtDesc(String status, Pageable pageable);
     Page<AdmissionEnquiry> findByParentEmailIgnoreCaseOrderByCreatedAtDesc(String parentEmail, Pageable pageable);
+
+    // Portal queries (unpaged; each user sees a small set)
+    List<AdmissionEnquiry> findAllByAssignedToIdOrderByCreatedAtDesc(Long userId);
+    List<AdmissionEnquiry> findAllByParentEmailIgnoreCaseOrderByCreatedAtDesc(String parentEmail);
 }

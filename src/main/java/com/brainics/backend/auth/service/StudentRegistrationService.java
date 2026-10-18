@@ -112,7 +112,7 @@ public class StudentRegistrationService {
         tokenRepository.save(verificationToken);
 
         String verificationUrl =
-                frontendUrl + "/verify-email?token=" + rawToken;
+                frontendUrl + "/admin/verify-email?token=" + rawToken;
 
         emailService.sendVerificationEmail(
                 email,

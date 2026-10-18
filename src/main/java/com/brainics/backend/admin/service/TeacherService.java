@@ -2,6 +2,7 @@ package com.brainics.backend.admin.service;
 
 import com.brainics.backend.admin.dto.TeacherProfileRequest;
 import com.brainics.backend.admin.dto.TeacherProfileResponse;
+import com.brainics.backend.admin.dto.TeacherSelfUpdateRequest;
 import com.brainics.backend.teacher.model.TeacherProfile;
 import com.brainics.backend.teacher.model.TeacherSubjectExpertise;
 import com.brainics.backend.teacher.repository.TeacherProfileRepository;
@@ -158,6 +159,40 @@ public class TeacherService {
         TeacherProfile profile = teacherProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NoSuchElementException("Teacher profile not found for user: " + userId));
         return toResponse(profile);
+    }
+
+    // Teacher portal: the signed-in teacher's own profile
+    @Transactional(readOnly = true)
+    public TeacherProfileResponse getOwnProfile(String username) {
+        AppUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("User not found: " + username));
+        return getTeacherProfileByUserId(user.getId());
+    }
+
+    // Teachers may edit their own bio, qualifications, experience and phone; subjects stay admin-managed
+    public TeacherProfileResponse updateOwnProfile(String username, TeacherSelfUpdateRequest request) {
+        AppUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("User not found: " + username));
+        TeacherProfile profile = teacherProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NoSuchElementException("Teacher profile not found for user: " + username));
+
+        profile.setBio(request.bio());
+        profile.setQualifications(request.qualifications());
+        profile.setExperienceYears(request.experienceYears());
+        profile.setPhone(request.phone());
+        TeacherProfile saved = teacherProfileRepository.save(profile);
+
+        auditLogService.logAction(
+                user.getId(),
+                "UPDATE",
+                "TEACHER_PROFILE",
+                saved.getId(),
+                null,
+                null,
+                "SUCCESS"
+        );
+
+        return toResponse(saved);
     }
 
     @Transactional(readOnly = true)

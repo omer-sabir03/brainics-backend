@@ -145,7 +145,7 @@ public class EnquiryService {
         }
     }
 
-    private EnquiryResponse toEnquiryResponse(AdmissionEnquiry enquiry) {
+    public EnquiryResponse toEnquiryResponse(AdmissionEnquiry enquiry) {
         List<EnquiryResponse.SubjectPreferenceResponse> subjects = enquirySubjectRepository
             .findByEnquiry(enquiry).stream()
             .map(es -> EnquiryResponse.SubjectPreferenceResponse.builder()
