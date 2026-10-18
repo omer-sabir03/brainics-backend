@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface TeacherSubjectExpertiseRepository extends CrudRepository<TeacherSubjectExpertise, Long> {
     List<TeacherSubjectExpertise> findByTeacherId(Long teacherId);
+    List<TeacherSubjectExpertise> findByTeacherProfileId(Long teacherProfileId);
+    List<TeacherSubjectExpertise> findBySubjectId(Long subjectId);
+    List<TeacherSubjectExpertise> findByProficiencyLevel(String proficiencyLevel);
+    void deleteByTeacherProfileId(Long teacherProfileId);
 }

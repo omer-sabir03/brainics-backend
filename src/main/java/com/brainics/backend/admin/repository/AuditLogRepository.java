@@ -12,8 +12,12 @@ import java.util.List;
 @Repository
 public interface AuditLogRepository extends CrudRepository<AuditLog, Long> {
     Page<AuditLog> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    Page<AuditLog> findByActorId(Long actorId, Pageable pageable);
     Page<AuditLog> findByActorIdOrderByCreatedAtDesc(Long actorId, Pageable pageable);
+    Page<AuditLog> findByAction(String action, Pageable pageable);
     Page<AuditLog> findByActionOrderByCreatedAtDesc(String action, Pageable pageable);
+    Page<AuditLog> findByResourceType(String resourceType, Pageable pageable);
     Page<AuditLog> findByResourceTypeOrderByCreatedAtDesc(String resourceType, Pageable pageable);
+    Page<AuditLog> findAllByResourceIdOrderByCreatedAtDesc(Long resourceId, Pageable pageable);
     List<AuditLog> findByCreatedAtBetween(ZonedDateTime startDate, ZonedDateTime endDate);
 }

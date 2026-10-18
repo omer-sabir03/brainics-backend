@@ -68,6 +68,9 @@ public class AdmissionEnquiry {
     @Column(name = "created_ip_address", length = 45)
     private String createdIpAddress;
 
+    @Column(name = "first_response_time", columnDefinition = "TIMESTAMPTZ")
+    private ZonedDateTime firstResponseTime;
+
     @PrePersist
     protected void onCreate() {
         createdAt = ZonedDateTime.now();
