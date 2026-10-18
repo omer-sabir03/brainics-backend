@@ -1,0 +1,15 @@
+name: Keep backend awake
+
+# Pings the Render health endpoint every 10 minutes so the free instance does not sleep.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        # -f fails the job on HTTP errors; the long timeout covers a cold start
+        run: curl -fsS --max-time 120 https://brainics-backend.onrender.com/api/health
