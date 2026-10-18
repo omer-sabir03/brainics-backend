@@ -35,6 +35,18 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, message, data, null, Instant.now());
     }
 
+    public static <T> ApiResponse<T> ok(T data) {
+        return success(data);
+    }
+
+    public static <T> ApiResponse<T> ok(String message, T data) {
+        return success(data, message);
+    }
+
+    public static <T> ApiResponse<T> failure(String message, T data) {
+        return error(message, data);
+    }
+
     public static <T> ApiResponse<T> validationFailed(String message, Map<String, String> errors) {
         return new ApiResponse<>(false, message, null, errors, Instant.now());
     }

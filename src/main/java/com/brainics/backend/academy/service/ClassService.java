@@ -39,7 +39,7 @@ public class ClassService {
             .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + classId));
     }
 
-    public ClassResponse getClassByNumber(Integer classNumber) {
+    public ClassResponse getClassByNumber(Short classNumber) {
         Class classEntity = classRepository.findByClassNumber(classNumber)
             .orElseThrow(() -> new ResourceNotFoundException("Class not found with number: " + classNumber));
         return toClassResponse(classEntity);

@@ -4,6 +4,8 @@ import com.brainics.backend.admin.dto.AdminUserRequest;
 import com.brainics.backend.admin.dto.AdminUserResponse;
 import com.brainics.backend.auth.model.AppUser;
 import com.brainics.backend.auth.model.Role;
+import com.brainics.backend.auth.model.RoleName;
+import com.brainics.backend.auth.repository.RoleRepository;
 import com.brainics.backend.auth.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,9 @@ class AdminUserServiceTest {
     @Mock
     private AuditLogService auditLogService;
 
+    @Mock
+    private RoleRepository roleRepository;
+
     @InjectMocks
     private AdminUserService adminUserService;
 
@@ -40,6 +45,9 @@ class AdminUserServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(roleRepository.findByName(RoleName.ADMIN))
+                .thenReturn(Optional.of(new Role(RoleName.ADMIN)));
+
         validRequest = AdminUserRequest.builder()
                 .username("testadmin")
                 .email("admin@test.com")

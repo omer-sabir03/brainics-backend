@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -56,7 +57,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
         if (entry.count > rateLimit) {
             log.warn("Rate limit exceeded for IP: {} on endpoint: {}", clientIp, endpoint);
-            response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setHeader("Retry-After", "3600");
             response.getWriter().write("{\"error\": \"Too many requests. Please try again later.\"}");
             return false;

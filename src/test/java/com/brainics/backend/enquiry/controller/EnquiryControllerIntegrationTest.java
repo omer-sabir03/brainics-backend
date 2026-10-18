@@ -46,7 +46,7 @@ class EnquiryControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         testClass = Class.builder()
-            .classNumber(6)
+            .classNumber((short) 6)
             .description("Class 6")
             .isActive(true)
             .build();

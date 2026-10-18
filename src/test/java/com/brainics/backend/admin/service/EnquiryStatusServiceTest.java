@@ -49,8 +49,8 @@ class EnquiryStatusServiceTest {
     void setUp() {
         testClass = Class.builder()
                 .id(1L)
-                .name("10th Grade")
-                .section("A")
+                .classNumber((short) 10)
+                .description("10th Grade")
                 .build();
 
         testUser = AppUser.builder()

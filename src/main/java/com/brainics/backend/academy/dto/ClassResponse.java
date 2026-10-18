@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class ClassResponse {
     private Long id;
-    private Integer classNumber;
+    private Short classNumber;
     private String description;
     private Boolean isActive;
     private List<SubjectResponse> subjects;

@@ -49,7 +49,7 @@ public class StudentRegistrationService {
             EmailVerificationTokenRepository tokenRepository,
             PasswordEncoder passwordEncoder,
             ResendEmailService emailService,
-            @Value("${app.frontend-url}") String frontendUrl
+            @Value("${brainics.frontend-url}") String frontendUrl
     ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;

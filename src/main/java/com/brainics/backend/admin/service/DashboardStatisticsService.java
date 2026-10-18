@@ -2,7 +2,7 @@ package com.brainics.backend.admin.service;
 
 import com.brainics.backend.admin.dto.DashboardStats;
 import com.brainics.backend.admin.repository.AuditLogRepository;
-import com.brainics.backend.admin.repository.TeacherProfileRepository;
+import com.brainics.backend.teacher.repository.TeacherProfileRepository;
 import com.brainics.backend.auth.model.AppUser;
 import com.brainics.backend.auth.repository.UserRepository;
 import com.brainics.backend.enquiry.model.AdmissionEnquiry;
@@ -84,8 +84,8 @@ public class DashboardStatisticsService {
         long adminCount = countUsersByRole(allUsers, "ADMIN");
         long teacherCount = countUsersByRole(allUsers, "TEACHER");
         long studentCount = countUsersByRole(allUsers, "STUDENT");
-        long activeUsers = allUsers.stream().filter(u -> Boolean.TRUE.equals(u.getEnabled())).count();
-        long inactiveUsers = allUsers.stream().filter(u -> Boolean.FALSE.equals(u.getEnabled())).count();
+        long activeUsers = allUsers.stream().filter(AppUser::isEnabled).count();
+        long inactiveUsers = allUsers.stream().filter(u -> !u.isEnabled()).count();
 
         return DashboardStats.UserStats.builder()
                 .totalUsers(totalUsers)

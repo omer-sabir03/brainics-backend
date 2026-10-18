@@ -1,5 +1,6 @@
 package com.brainics.backend.admin.service;
 
+import com.brainics.backend.admin.dto.AuditLogResponse;
 import com.brainics.backend.admin.model.AuditLog;
 import com.brainics.backend.admin.repository.AuditLogRepository;
 import com.brainics.backend.auth.model.AppUser;
@@ -49,7 +50,7 @@ class AuditLogServiceTest {
 
         testLog = AuditLog.builder()
                 .id(1L)
-                .actorId(1L)
+                .actor(testUser)
                 .action("CREATE")
                 .resourceType("USER")
                 .resourceId(2L)
@@ -73,7 +74,6 @@ class AuditLogServiceTest {
     @Test
     void testGetLogByIdSuccess() {
         when(auditLogRepository.findById(1L)).thenReturn(Optional.of(testLog));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
         var response = auditLogService.getLogById(1L);
 
@@ -94,9 +94,8 @@ class AuditLogServiceTest {
         Pageable pageable = PageRequest.of(0, 20);
         Page<AuditLog> page = new PageImpl<>(Arrays.asList(testLog));
         when(auditLogRepository.findAll(pageable)).thenReturn(page);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        Page<var> result = auditLogService.getAllLogs(pageable);
+        Page<AuditLogResponse> result = auditLogService.getAllLogs(pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
@@ -107,9 +106,8 @@ class AuditLogServiceTest {
         Pageable pageable = PageRequest.of(0, 20);
         Page<AuditLog> page = new PageImpl<>(Arrays.asList(testLog));
         when(auditLogRepository.findByActorId(1L, pageable)).thenReturn(page);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        Page<var> result = auditLogService.getLogsByActor(1L, pageable);
+        Page<AuditLogResponse> result = auditLogService.getLogsByActor(1L, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
@@ -120,9 +118,8 @@ class AuditLogServiceTest {
         Pageable pageable = PageRequest.of(0, 20);
         Page<AuditLog> page = new PageImpl<>(Arrays.asList(testLog));
         when(auditLogRepository.findByAction("CREATE", pageable)).thenReturn(page);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        Page<var> result = auditLogService.getLogsByAction("CREATE", pageable);
+        Page<AuditLogResponse> result = auditLogService.getLogsByAction("CREATE", pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
@@ -134,9 +131,8 @@ class AuditLogServiceTest {
         ZonedDateTime endDate = ZonedDateTime.now();
         List<AuditLog> logs = Arrays.asList(testLog);
         when(auditLogRepository.findByCreatedAtBetween(startDate, endDate)).thenReturn(logs);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        List<var> result = auditLogService.getLogsBetweenDates(startDate, endDate);
+        List<AuditLogResponse> result = auditLogService.getLogsBetweenDates(startDate, endDate);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -146,7 +142,7 @@ class AuditLogServiceTest {
     void testGetFailedActionsSuccess() {
         AuditLog failedLog = AuditLog.builder()
                 .id(2L)
-                .actorId(1L)
+                .actor(testUser)
                 .action("CREATE")
                 .resourceType("USER")
                 .status("FAILED")
@@ -154,9 +150,8 @@ class AuditLogServiceTest {
                 .build();
 
         when(auditLogRepository.findAll()).thenReturn(Arrays.asList(testLog, failedLog));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-        List<var> result = auditLogService.getFailedActions(10);
+        List<AuditLogResponse> result = auditLogService.getFailedActions(10);
 
         assertNotNull(result);
         assertEquals(1, result.size());

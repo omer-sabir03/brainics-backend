@@ -1,6 +1,8 @@
 package com.brainics.backend.auth.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 
@@ -16,6 +18,7 @@ public class EmailVerificationToken {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private AppUser user;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "token_hash", nullable = false, unique = true, length = 64)
     private String tokenHash;
 

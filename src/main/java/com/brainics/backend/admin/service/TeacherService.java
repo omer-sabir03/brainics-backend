@@ -59,7 +59,7 @@ public class TeacherService {
                     .orElseThrow(() -> new NoSuchElementException("Subject not found: " + expertiseRequest.getSubjectId()));
 
             TeacherSubjectExpertise expertise = TeacherSubjectExpertise.builder()
-                    .teacherProfile(saved)
+                    .teacher(saved)
                     .subject(subject)
                     .proficiencyLevel(expertiseRequest.getProficiencyLevel())
                     .build();
@@ -95,14 +95,14 @@ public class TeacherService {
         TeacherProfile updated = teacherProfileRepository.save(profile);
 
         // Remove old expertise and add new ones
-        subjectExpertiseRepository.deleteByTeacherProfileId(profileId);
+        subjectExpertiseRepository.deleteByTeacherId(profileId);
 
         for (TeacherProfileRequest.SubjectExpertiseRequest expertiseRequest : request.getSubjectExpertise()) {
             Subject subject = subjectRepository.findById(expertiseRequest.getSubjectId())
                     .orElseThrow(() -> new NoSuchElementException("Subject not found: " + expertiseRequest.getSubjectId()));
 
             TeacherSubjectExpertise expertise = TeacherSubjectExpertise.builder()
-                    .teacherProfile(updated)
+                    .teacher(updated)
                     .subject(subject)
                     .proficiencyLevel(expertiseRequest.getProficiencyLevel())
                     .build();
@@ -130,7 +130,7 @@ public class TeacherService {
         TeacherProfile profile = teacherProfileRepository.findById(profileId)
                 .orElseThrow(() -> new NoSuchElementException("Teacher profile not found: " + profileId));
 
-        subjectExpertiseRepository.deleteByTeacherProfileId(profileId);
+        subjectExpertiseRepository.deleteByTeacherId(profileId);
         teacherProfileRepository.delete(profile);
 
         auditLogService.logAction(
@@ -169,7 +169,7 @@ public class TeacherService {
     @Transactional(readOnly = true)
     public List<TeacherProfileResponse> getTeachersBySubject(Long subjectId) {
         return subjectExpertiseRepository.findBySubjectId(subjectId).stream()
-                .map(expertise -> toResponse(expertise.getTeacherProfile()))
+                .map(expertise -> toResponse(expertise.getTeacher()))
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -177,17 +177,17 @@ public class TeacherService {
     @Transactional(readOnly = true)
     public List<TeacherProfileResponse> getTeachersByProficiencyLevel(String proficiencyLevel) {
         return subjectExpertiseRepository.findByProficiencyLevel(proficiencyLevel).stream()
-                .map(expertise -> toResponse(expertise.getTeacherProfile()))
+                .map(expertise -> toResponse(expertise.getTeacher()))
                 .distinct()
                 .collect(Collectors.toList());
     }
 
     private TeacherProfileResponse toResponse(TeacherProfile profile) {
         List<TeacherProfileResponse.SubjectExpertiseResponse> expertise = subjectExpertiseRepository
-                .findByTeacherProfileId(profile.getId()).stream()
+                .findByTeacherId(profile.getId()).stream()
                 .map(exp -> TeacherProfileResponse.SubjectExpertiseResponse.builder()
                         .subjectId(exp.getSubject().getId())
-                        .subjectName(exp.getSubject().getName())
+                        .subjectName(exp.getSubject().getNameEn())
                         .proficiencyLevel(exp.getProficiencyLevel())
                         .build())
                 .collect(Collectors.toList());

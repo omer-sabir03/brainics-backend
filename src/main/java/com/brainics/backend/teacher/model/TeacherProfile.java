@@ -34,7 +34,7 @@ public class TeacherProfile {
     private String qualifications;
 
     @Column(name = "experience_years")
-    private Integer experienceYears;
+    private Short experienceYears;
 
     @Column(name = "phone", length = 20)
     private String phone;

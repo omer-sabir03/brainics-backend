@@ -20,7 +20,7 @@ public class HealthController {
     @GetMapping
     public ResponseEntity<ApiResponse<HealthStatus>> health() {
         HealthStatus status = healthService.check();
-        if ("UP".equals(status.status())) {
+        if ("UP".equals(status.getStatus())) {
             return ResponseEntity.ok(ApiResponse.ok("Brainics API is running", status));
         }
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)

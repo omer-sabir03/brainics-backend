@@ -2,10 +2,9 @@ package com.brainics.backend.enquiry.service;
 
 import com.brainics.backend.enquiry.model.AdmissionEnquiry;
 import com.brainics.backend.enquiry.model.EnquirySubject;
+import com.brainics.backend.email.ResendEmailService;
 import com.brainics.backend.enquiry.repository.EnquirySubjectRepository;
 import com.brainics.backend.notification.repository.NotificationTemplateRepository;
-import com.resend.Resend;
-import com.resend.core.exception.ResendException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +25,10 @@ public class NotificationService {
 
     private final EnquirySubjectRepository enquirySubjectRepository;
     private final NotificationTemplateRepository notificationTemplateRepository;
-    private final Resend resendClient;
+    private final ResendEmailService resendEmailService;
 
     @Value("${app.enquiry.admin-notification-email}")
     private String adminEmail;
-
-    @Value("${brainics.email.from}")
-    private String fromEmail;
 
     @Value("${brainics.frontend-url:https://brainics.vercel.app}")
     private String frontendUrl;
@@ -128,15 +124,10 @@ public class NotificationService {
         for (Map.Entry<String, String> entry : variables.entrySet()) {
             result = result.replace("{{" + entry.getKey() + "}}", entry.getValue() != null ? entry.getValue() : "");
         }
-        return result;
+        return result.replaceAll("\\{\\{[^}]*\\}\\}", "");
     }
 
-    private void sendEmail(String recipientEmail, String subject, String htmlBody) throws ResendException {
-        resendClient.emails().send(com.resend.core.Email.builder()
-            .from(fromEmail)
-            .to(recipientEmail)
-            .subject(subject)
-            .html(htmlBody)
-            .build());
+    private void sendEmail(String recipientEmail, String subject, String htmlBody) {
+        resendEmailService.sendEmail(recipientEmail, subject, htmlBody);
     }
 }

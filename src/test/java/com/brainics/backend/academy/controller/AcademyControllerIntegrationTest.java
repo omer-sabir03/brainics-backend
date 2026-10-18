@@ -41,14 +41,14 @@ class AcademyControllerIntegrationTest {
     void setUp() {
         // Create test classes
         Class class1 = Class.builder()
-            .classNumber(1)
+            .classNumber((short) 1)
             .description("Class 1")
             .isActive(true)
             .build();
         class1 = classRepository.save(class1);
 
         Class class2 = Class.builder()
-            .classNumber(2)
+            .classNumber((short) 2)
             .description("Class 2")
             .isActive(true)
             .build();
@@ -106,7 +106,7 @@ class AcademyControllerIntegrationTest {
 
     @Test
     void testGetClassById() throws Exception {
-        Class testClass = classRepository.findByClassNumber(1).orElseThrow();
+        Class testClass = classRepository.findByClassNumber((short) 1).orElseThrow();
 
         mockMvc.perform(get("/api/public/academy/classes/" + testClass.getId()))
             .andExpect(status().isOk())

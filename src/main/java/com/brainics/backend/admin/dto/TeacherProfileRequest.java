@@ -24,7 +24,7 @@ public class TeacherProfileRequest {
     @NotNull(message = "Experience years is required")
     @Min(value = 0, message = "Experience years cannot be negative")
     @Max(value = 70, message = "Experience years cannot exceed 70")
-    private Integer experienceYears;
+    private Short experienceYears;
 
     @Pattern(regexp = "^(\\+92|0)[0-9]{10}$", message = "Invalid phone format")
     private String phone;

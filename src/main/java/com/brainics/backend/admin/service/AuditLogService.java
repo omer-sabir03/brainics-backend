@@ -40,8 +40,10 @@ public class AuditLogService {
         String ipAddress = getClientIp();
         String userAgent = getUserAgent();
 
-        AuditLog log = AuditLog.builder()
-                .actorId(actorId)
+        AppUser actor = actorId == null ? null : userRepository.findById(actorId).orElse(null);
+
+        AuditLog entry = AuditLog.builder()
+                .actor(actor)
                 .action(action)
                 .resourceType(resourceType)
                 .resourceId(resourceId)
@@ -53,7 +55,7 @@ public class AuditLogService {
                 .errorMessage(errorMessage)
                 .build();
 
-        AuditLog saved = auditLogRepository.save(log);
+        AuditLog saved = auditLogRepository.save(entry);
         log.info("Action logged: {} {} by user {} - Status: {}", action, resourceType, actorId, status);
         return saved;
     }
@@ -114,15 +116,14 @@ public class AuditLogService {
 
     private AuditLogResponse toResponse(AuditLog log) {
         String actorUsername = null;
-        if (log.getActorId() != null) {
-            actorUsername = userRepository.findById(log.getActorId())
-                    .map(AppUser::getUsername)
-                    .orElse("Unknown");
+        AppUser actor = log.getActor();
+        if (actor != null) {
+            actorUsername = actor.getUsername();
         }
 
         return AuditLogResponse.builder()
                 .id(log.getId())
-                .actorId(log.getActorId())
+                .actorId(actor != null ? actor.getId() : null)
                 .actorUsername(actorUsername)
                 .action(log.getAction())
                 .resourceType(log.getResourceType())

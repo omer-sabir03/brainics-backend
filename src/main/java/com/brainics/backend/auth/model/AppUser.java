@@ -1,6 +1,7 @@
 package com.brainics.backend.auth.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,7 @@ public class AppUser {
     private String passwordHash;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean enabled = true;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -38,12 +41,14 @@ public class AppUser {
     private String email;
 
     @Column(name = "email_verified", nullable = false)
+    @Builder.Default
     private boolean emailVerified = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "first_name", length = 100)
@@ -55,7 +60,9 @@ public class AppUser {
     @Column(name = "phone", length = 20)
     private String phone;
 
-    protected AppUser() { }
+    protected AppUser() {
+        this.roles = new HashSet<>();
+    }
 
     public AppUser(String username, String passwordHash, Set<Role> roles) {
         this.username = username;
@@ -132,6 +139,11 @@ public class AppUser {
     }
 
     public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void replaceRole(Role role) {
+        this.roles.clear();
         this.roles.add(role);
     }
 

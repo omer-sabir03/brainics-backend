@@ -62,7 +62,7 @@ class HealthControllerTest {
 
         mockMvc.perform(get("/api/health"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Something went wrong on our side"));
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred. Please try again later."));
     }
 }

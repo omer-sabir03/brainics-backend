@@ -46,7 +46,7 @@ public class AdminPreference {
 
     @Column(name = "rows_per_page")
     @Builder.Default
-    private Integer rowsPerPage = 20;
+    private Short rowsPerPage = (short) 20;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMPTZ")
     private ZonedDateTime createdAt;

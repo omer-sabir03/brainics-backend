@@ -85,8 +85,8 @@
         <!-- JSONB Support for Hibernate -->
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-60</artifactId>
-            <version>3.7.3</version>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <version>3.9.4</version>
         </dependency>
 
         <!-- Email Templates (Freemarker) -->
@@ -112,6 +112,12 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
+            <version>1.19.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <version>1.19.1</version>
             <scope>test</scope>
         </dependency>

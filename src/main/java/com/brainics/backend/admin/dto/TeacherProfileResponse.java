@@ -18,7 +18,7 @@ public class TeacherProfileResponse {
     private String email;
     private String bio;
     private String qualifications;
-    private Integer experienceYears;
+    private Short experienceYears;
     private String phone;
     private List<SubjectExpertiseResponse> subjectExpertise;
     private ZonedDateTime createdAt;

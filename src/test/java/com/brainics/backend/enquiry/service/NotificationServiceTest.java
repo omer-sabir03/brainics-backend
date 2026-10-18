@@ -2,13 +2,12 @@ package com.brainics.backend.enquiry.service;
 
 import com.brainics.backend.academy.model.Class;
 import com.brainics.backend.academy.model.Subject;
+import com.brainics.backend.email.ResendEmailService;
 import com.brainics.backend.enquiry.model.AdmissionEnquiry;
 import com.brainics.backend.enquiry.model.EnquirySubject;
 import com.brainics.backend.enquiry.repository.EnquirySubjectRepository;
 import com.brainics.backend.notification.model.NotificationTemplate;
 import com.brainics.backend.notification.repository.NotificationTemplateRepository;
-import com.resend.Resend;
-import com.resend.core.exception.ResendException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +33,7 @@ class NotificationServiceTest {
     private NotificationTemplateRepository notificationTemplateRepository;
 
     @Mock
-    private Resend resendClient;
+    private ResendEmailService resendEmailService;
 
     private NotificationService notificationService;
 
@@ -43,7 +42,7 @@ class NotificationServiceTest {
         notificationService = new NotificationService(
             enquirySubjectRepository,
             notificationTemplateRepository,
-            resendClient
+            resendEmailService
         );
 
         // Use reflection to set the private fields
@@ -51,10 +50,6 @@ class NotificationServiceTest {
             var adminEmailField = NotificationService.class.getDeclaredField("adminEmail");
             adminEmailField.setAccessible(true);
             adminEmailField.set(notificationService, "admin@brainics.com");
-
-            var fromEmailField = NotificationService.class.getDeclaredField("fromEmail");
-            fromEmailField.setAccessible(true);
-            fromEmailField.set(notificationService, "noreply@brainics.com");
 
             var frontendUrlField = NotificationService.class.getDeclaredField("frontendUrl");
             frontendUrlField.setAccessible(true);
@@ -102,7 +97,7 @@ class NotificationServiceTest {
 
     @Test
     void testAdminNotificationVariablesBuilding() {
-        Class classEntity = Class.builder().classNumber(5).build();
+        Class classEntity = Class.builder().classNumber((short) 5).build();
         classEntity.setId(1L);
 
         Subject subject = Subject.builder().nameEn("Math").nameUrdu("ریاضی").build();
@@ -142,16 +137,13 @@ class NotificationServiceTest {
     }
 
     @Test
-    void testEmailSendingSuccess() throws ResendException {
-        var emailsEndpoint = mock(com.resend.services.emails.EmailEndpoint.class);
-        when(resendClient.emails()).thenReturn(emailsEndpoint);
-
+    void testEmailSendingSuccess() {
         try {
             var sendMethod = NotificationService.class.getDeclaredMethod("sendEmail", String.class, String.class, String.class);
             sendMethod.setAccessible(true);
             sendMethod.invoke(notificationService, "test@example.com", "Test Subject", "<p>Test Body</p>");
 
-            verify(emailsEndpoint, times(1)).send(any());
+            verify(resendEmailService, times(1)).sendEmail("test@example.com", "Test Subject", "<p>Test Body</p>");
         } catch (Exception e) {
             fail("Email sending test failed: " + e.getMessage());
         }

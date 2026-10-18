@@ -45,7 +45,7 @@ class EnquiryServiceIntegrationTest {
     void setUp() {
         // Create test class
         testClass = Class.builder()
-            .classNumber(5)
+            .classNumber((short) 5)
             .description("Class 5")
             .isActive(true)
             .build();

@@ -3,6 +3,9 @@ package com.brainics.backend.admin.service;
 import com.brainics.backend.admin.dto.AdminUserRequest;
 import com.brainics.backend.admin.dto.AdminUserResponse;
 import com.brainics.backend.auth.model.AppUser;
+import com.brainics.backend.auth.model.Role;
+import com.brainics.backend.auth.model.RoleName;
+import com.brainics.backend.auth.repository.RoleRepository;
 import com.brainics.backend.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 public class AdminUserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
 
@@ -39,14 +44,14 @@ public class AdminUserService {
         AppUser user = AppUser.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .enabled(request.getEnabled())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phone(request.getPhone())
                 .build();
 
-        user.addRole(request.getRole());
+        user.addRole(resolveRole(request.getRole()));
         AppUser saved = userRepository.save(user);
 
         auditLogService.logAction(
@@ -94,9 +99,10 @@ public class AdminUserService {
         }
 
         // Update role if changed
-        if (!user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toList()).contains(request.getRole())) {
-            user.getRoles().clear();
-            user.addRole(request.getRole());
+        String newRole = request.getRole().trim().toUpperCase();
+        boolean roleChanged = user.getRoles().stream().noneMatch(r -> r.getName().name().equals(newRole));
+        if (roleChanged) {
+            user.replaceRole(resolveRole(newRole));
         }
 
         AppUser updated = userRepository.save(user);
@@ -154,7 +160,7 @@ public class AdminUserService {
     }
 
     public Page<AdminUserResponse> getUsersByRole(String role, Pageable pageable) {
-        return userRepository.findAllByRolesName(role, pageable)
+        return userRepository.findAllByRolesName(RoleName.valueOf(role.trim().toUpperCase()), pageable)
                 .map(this::toResponse);
     }
 
@@ -178,18 +184,24 @@ public class AdminUserService {
         log.info("User disabled: {} (ID: {})", user.getUsername(), userId);
     }
 
+    private Role resolveRole(String role) {
+        RoleName name = RoleName.valueOf(role.trim().toUpperCase());
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown role: " + role));
+    }
+
     private AdminUserResponse toResponse(AppUser user) {
         return AdminUserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .roles(user.getRoles().stream()
-                        .map(r -> r.getName())
+                        .map(r -> r.getName().name())
                         .collect(Collectors.toSet()))
                 .enabled(user.isEnabled())
                 .emailVerified(user.isEmailVerified())
-                .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().atZone(java.time.ZoneId.of("UTC")) : null)
-                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt().atZone(java.time.ZoneId.of("UTC")) : null)
+                .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().atZone(ZoneId.of("UTC")) : null)
+                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt().atZone(ZoneId.of("UTC")) : null)
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phone(user.getPhone())

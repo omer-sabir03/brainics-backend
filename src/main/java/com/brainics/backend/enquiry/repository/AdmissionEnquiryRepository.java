@@ -3,7 +3,7 @@ package com.brainics.backend.enquiry.repository;
 import com.brainics.backend.enquiry.model.AdmissionEnquiry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AdmissionEnquiryRepository extends CrudRepository<AdmissionEnquiry, Long> {
+public interface AdmissionEnquiryRepository extends JpaRepository<AdmissionEnquiry, Long> {
     Optional<AdmissionEnquiry> findByParentEmailIgnoreCaseAndClassEntityIdAndCreatedAtAfter(
         String parentEmail, Long classId, ZonedDateTime createdAfter);
 
