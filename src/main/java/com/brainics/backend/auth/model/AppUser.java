@@ -27,6 +27,12 @@ public class AppUser {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "email", length = 254)
+    private String email;
+
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -60,4 +66,20 @@ public class AppUser {
     public Set<Role> getRoles() { return Set.copyOf(roles); }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
 }
