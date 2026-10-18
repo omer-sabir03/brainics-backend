@@ -18,11 +18,12 @@ public class AuthController {
     private final AuthService authService;
     private final UserRepository userRepository;
 
-    private StudentRegistrationService studentRegistrationService;
+    private final StudentRegistrationService studentRegistrationService;
 
-    public AuthController(AuthService authService, UserRepository userRepository) {
+    public AuthController(AuthService authService, UserRepository userRepository, StudentRegistrationService studentRegistrationService) {
         this.authService = authService;
         this.userRepository = userRepository;
+        this.studentRegistrationService = studentRegistrationService;
     }
 
     @PostMapping("/login")
