@@ -52,14 +52,10 @@ public class ResendEmailService {
     public void sendVerificationEmail(
             String to, String verificationUrl) {
 
-        String html = """
-                <h2>Welcome to Brainics!</h2>
-                <p>Please verify your email address by clicking below.</p>
-                <p>
-                    <a href="%s">Verify my email</a>
-                </p>
-                <p>If you did not create an account, ignore this email.</p>
-                """.formatted(verificationUrl);
+        String html = "<h2>Welcome to Brainics!</h2>" +
+                "<p>Please verify your email address by clicking below.</p>" +
+                "<p><a href=\"" + verificationUrl + "\">Verify my email</a></p>" +
+                "<p>If you did not create an account, ignore this email.</p>";
 
         sendEmail(to, "Verify your Brainics email", html);
     }
@@ -67,14 +63,10 @@ public class ResendEmailService {
     public void sendPasswordResetEmail(
             String to, String resetUrl) {
 
-        String html = """
-                <h2>Reset your Brainics password</h2>
-                <p>Click below to reset your password.</p>
-                <p>
-                    <a href="%s">Reset password</a>
-                </p>
-                <p>If you did not request this, ignore this email.</p>
-                """.formatted(resetUrl);
+        String html = "<h2>Reset your Brainics password</h2>" +
+                "<p>Click below to reset your password.</p>" +
+                "<p><a href=\"" + resetUrl + "\">Reset password</a></p>" +
+                "<p>If you did not request this, ignore this email.</p>";
 
         sendEmail(to, "Reset your Brainics password", html);
     }
