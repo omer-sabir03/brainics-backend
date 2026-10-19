@@ -1,7 +1,13 @@
 package com.brainics.backend.config;
 
 import com.brainics.backend.auth.service.CustomUserDetailsService;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -92,9 +98,16 @@ public class SecurityConfig {
 
     @Bean
     JwtEncoder jwtEncoder(SecretKey jwtSecretKey) {
-        return new NimbusJwtEncoder(new ImmutableSecret<>(jwtSecretKey));
-    }
+        OctetSequenceKey jwk = new OctetSequenceKey.Builder(jwtSecretKey)
+                .algorithm(JWSAlgorithm.HS256)
+                .keyID("brainics-hs256")
+                .build();
 
+        JWKSource<SecurityContext> jwkSource =
+                new ImmutableJWKSet<>(new JWKSet(jwk));
+
+        return new NimbusJwtEncoder(jwkSource);
+    }
     @Bean
     JwtDecoder jwtDecoder(SecretKey jwtSecretKey) {
         return NimbusJwtDecoder.withSecretKey(jwtSecretKey).macAlgorithm(MacAlgorithm.HS256).build();
