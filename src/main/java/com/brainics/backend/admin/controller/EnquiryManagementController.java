@@ -1,6 +1,8 @@
 package com.brainics.backend.admin.controller;
 
 import com.brainics.backend.admin.service.EnquiryStatusService;
+import com.brainics.backend.auth.model.AppUser;
+import com.brainics.backend.auth.repository.UserRepository;
 import com.brainics.backend.enquiry.model.AdmissionEnquiry;
 import com.brainics.backend.enquiry.model.EnquiryStatusHistory;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin/enquiries")
@@ -20,6 +24,7 @@ import java.util.List;
 public class EnquiryManagementController {
 
     private final EnquiryStatusService enquiryStatusService;
+    private final UserRepository userRepository;
 
     @PutMapping("/{enquiryId}/status")
     @PreAuthorize("hasRole('ADMIN')")
@@ -99,7 +104,12 @@ public class EnquiryManagementController {
             @PathVariable Long teacherId,
             Authentication authentication) {
         log.info("Assigning enquiry {} to teacher {}", enquiryId, teacherId);
-        Long actorId = (Long) authentication.getPrincipal();
+  //      Long actorId = (Long) authentication.getPrincipal();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+
+        Optional<AppUser> byUsername = userRepository.findByUsername(username);
+        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
         enquiryStatusService.assignEnquiryToTeacher(enquiryId, teacherId, actorId);
         return ResponseEntity.ok().build();
     }

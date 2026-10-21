@@ -3,6 +3,8 @@ package com.brainics.backend.admin.controller;
 import com.brainics.backend.admin.dto.TeacherProfileRequest;
 import com.brainics.backend.admin.dto.TeacherProfileResponse;
 import com.brainics.backend.admin.service.TeacherService;
+import com.brainics.backend.auth.model.AppUser;
+import com.brainics.backend.auth.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin/teachers")
@@ -24,6 +28,7 @@ import java.util.List;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final UserRepository userRepository;
 
     @PostMapping("/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -32,8 +37,13 @@ public class TeacherController {
             @Valid @RequestBody TeacherProfileRequest request,
             Authentication authentication) {
         log.info("Creating teacher profile for user: {}", userId);
-        Long actorId = (Long) authentication.getPrincipal();
-        TeacherProfileResponse response = teacherService.createTeacherProfile(userId, request, actorId);
+//        Long actorId = (Long) authentication.getPrincipal();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+
+        Optional<AppUser> byUsername = userRepository.findByUsername(username);
+        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        TeacherProfileResponse response = teacherService.createTeacherProfile(userId, request,actorId );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -44,7 +54,12 @@ public class TeacherController {
             @Valid @RequestBody TeacherProfileRequest request,
             Authentication authentication) {
         log.info("Updating teacher profile: {}", profileId);
-        Long actorId = (Long) authentication.getPrincipal();
+//        Long actorId = (Long) authentication.getPrincipal();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+
+        Optional<AppUser> byUsername = userRepository.findByUsername(username);
+        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
         TeacherProfileResponse response = teacherService.updateTeacherProfile(profileId, request, actorId);
         return ResponseEntity.ok(response);
     }
@@ -55,7 +70,11 @@ public class TeacherController {
             @PathVariable Long profileId,
             Authentication authentication) {
         log.info("Deleting teacher profile: {}", profileId);
-        Long actorId = (Long) authentication.getPrincipal();
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+        String username = jwt.getSubject();
+
+        Optional<AppUser> byUsername = userRepository.findByUsername(username);
+        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
         teacherService.deleteTeacherProfile(profileId, actorId);
         return ResponseEntity.noContent().build();
     }
