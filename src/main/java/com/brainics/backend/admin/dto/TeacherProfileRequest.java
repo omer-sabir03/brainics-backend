@@ -26,7 +26,7 @@ public class TeacherProfileRequest {
     @Max(value = 70, message = "Experience years cannot exceed 70")
     private Short experienceYears;
 
-    @Pattern(regexp = "^(\\+92|0)[0-9]{10}$", message = "Invalid phone format")
+    @Pattern(regexp = "^(\\+91|0)[6-9][0-9]{9}$", message = "Invalid phone format")
     private String phone;
 
     @NotEmpty(message = "At least one subject expertise is required")

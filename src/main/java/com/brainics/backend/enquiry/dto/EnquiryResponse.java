@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class EnquiryResponse {
     private String parentEmail;
     private String parentPhone;
     private String studentName;
+    private LocalDate studentDateOfBirth;
+    private String gender;
+    private String currentSchool;
+    private String address;
     private Long classId;
     private String className;
     private List<SubjectPreferenceResponse> preferredSubjects;

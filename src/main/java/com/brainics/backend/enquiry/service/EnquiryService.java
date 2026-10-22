@@ -48,13 +48,17 @@ public class EnquiryService {
 
         checkForDuplicateEnquiry(request.getParentEmail(), classEntity.getId());
 
-        String normalizedPhone = PhoneValidator.normalizePakistanPhone(request.getParentPhone());
+        String normalizedPhone = PhoneValidator.normalizeIndianPhone(request.getParentPhone());
 
         AdmissionEnquiry enquiry = AdmissionEnquiry.builder()
             .parentName(request.getParentName())
             .parentEmail(request.getParentEmail().toLowerCase())
             .parentPhone(normalizedPhone)
             .studentName(request.getStudentName())
+            .studentDateOfBirth(request.getStudentDateOfBirth())
+            .gender(request.getGender())
+            .currentSchool(request.getCurrentSchool())
+            .address(request.getAddress())
             .classEntity(classEntity)
             .message(request.getMessage())
             .status("NEW")
@@ -116,8 +120,8 @@ public class EnquiryService {
             throw new BadRequestException("Invalid email format");
         }
 
-        if (!PhoneValidator.isValidPakistanPhone(request.getParentPhone())) {
-            throw new BadRequestException("Invalid phone format. Use +92XXXXXXXXXX or 0XXXXXXXXXX");
+        if (!PhoneValidator.isValidIndianPhone(request.getParentPhone())) {
+            throw new BadRequestException("Invalid phone format. Use +91XXXXXXXXXX or 0XXXXXXXXXX");
         }
 
         if (request.getStudentName() == null || request.getStudentName().isBlank()) {
@@ -161,6 +165,10 @@ public class EnquiryService {
             .parentEmail(enquiry.getParentEmail())
             .parentPhone(enquiry.getParentPhone())
             .studentName(enquiry.getStudentName())
+            .studentDateOfBirth(enquiry.getStudentDateOfBirth())
+            .gender(enquiry.getGender())
+            .currentSchool(enquiry.getCurrentSchool())
+            .address(enquiry.getAddress())
             .classId(enquiry.getClassEntity().getId())
             .className("Class " + enquiry.getClassEntity().getClassNumber())
             .preferredSubjects(subjects)

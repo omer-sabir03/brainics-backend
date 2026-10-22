@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -39,6 +40,18 @@ public class AdmissionEnquiry {
 
     @Column(name = "student_name", nullable = false, length = 100)
     private String studentName;
+
+    @Column(name = "student_date_of_birth")
+    private LocalDate studentDateOfBirth;
+
+    @Column(name = "gender", length = 10)
+    private String gender;
+
+    @Column(name = "current_school", length = 200)
+    private String currentSchool;
+
+    @Column(name = "address", length = 500)
+    private String address;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "class_id", nullable = false)

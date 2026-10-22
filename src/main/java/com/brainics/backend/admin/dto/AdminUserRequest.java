@@ -30,7 +30,7 @@ public class AdminUserRequest {
     private String firstName;
     private String lastName;
 
-    @Pattern(regexp = "^(\\+92|0)[0-9]{10}$", message = "Invalid phone format")
+    @Pattern(regexp = "^(\\+91|0)[6-9][0-9]{9}$", message = "Invalid phone format")
     private String phone;
 
     @Builder.Default
