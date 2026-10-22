@@ -42,7 +42,7 @@ public class TeacherController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         TeacherProfileResponse response = teacherService.createTeacherProfile(userId, request,actorId );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -59,7 +59,7 @@ public class TeacherController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         TeacherProfileResponse response = teacherService.updateTeacherProfile(profileId, request, actorId);
         return ResponseEntity.ok(response);
     }
@@ -74,7 +74,7 @@ public class TeacherController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         teacherService.deleteTeacherProfile(profileId, actorId);
         return ResponseEntity.noContent().build();
     }

@@ -109,7 +109,7 @@ public class EnquiryManagementController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         enquiryStatusService.assignEnquiryToTeacher(enquiryId, teacherId, actorId);
         return ResponseEntity.ok().build();
     }

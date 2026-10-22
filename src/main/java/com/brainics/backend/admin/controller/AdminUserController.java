@@ -39,7 +39,7 @@ public class AdminUserController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         AdminUserResponse response = adminUserService.createUser(request, actorId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -55,7 +55,7 @@ public class AdminUserController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         AdminUserResponse response = adminUserService.updateUser(userId, request, actorId);
         return ResponseEntity.ok(response);
     }
@@ -71,7 +71,7 @@ public class AdminUserController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         adminUserService.deleteUser(userId, actorId);
         return ResponseEntity.noContent().build();
     }
@@ -121,7 +121,7 @@ public class AdminUserController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         adminUserService.enableUser(userId, actorId);
         return ResponseEntity.ok().build();
     }
@@ -137,7 +137,7 @@ public class AdminUserController {
         String username = jwt.getSubject();
 
         Optional<AppUser> byUsername = userRepository.findByUsername(username);
-        Long actorId = byUsername.isEmpty()?byUsername.get().getId(): -1;
+        Long actorId = byUsername.isPresent()?byUsername.get().getId(): -1;
         adminUserService.disableUser(userId, actorId);
         return ResponseEntity.ok().build();
     }
