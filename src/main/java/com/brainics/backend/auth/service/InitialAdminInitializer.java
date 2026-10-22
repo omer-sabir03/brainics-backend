@@ -46,13 +46,19 @@ public class InitialAdminInitializer implements ApplicationRunner {
         if (username.isBlank() || password.isBlank() || password.length() < 12) {
             throw new IllegalStateException("Configure both INITIAL_ADMIN_USERNAME and INITIAL_ADMIN_PASSWORD (at least 12 characters)");
         }
+        // Bootstrap only once: if any admin exists, never create another one from configuration
+        if (userRepository.existsByRolesName(RoleName.ADMIN)) {
+            log.info("An admin account already exists; initial admin is not created.");
+            return;
+        }
         String normalized = CustomUserDetailsService.normalize(username);
         if (userRepository.existsByUsername(normalized)) {
-            log.info("Configured initial admin already exists; no account changes made.");
+            log.warn("Configured initial admin username is already used by a non-admin account; no changes made.");
             return;
         }
         Role adminRole = roleRepository.findByName(RoleName.ADMIN)
                 .orElseThrow(() -> new IllegalStateException("ADMIN role missing; verify Flyway V2 migration"));
+        // The password is hashed by the configured encoder and never logged
         userRepository.save(new AppUser(normalized, passwordEncoder.encode(password), Set.of(adminRole)));
         log.info("Initial admin account created from environment configuration.");
     }
